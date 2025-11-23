@@ -5,10 +5,13 @@ import { useEffect, useState } from 'react';
 import * as THREE from 'three/webgpu';
 import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js';
 import OceanScene from './OceanScene';
+import OceanControls from './OceanControls';
 
 export default function Ocean() {
   const [isClient, setIsClient] = useState(false);
   const [supportsWebGPU, setSupportsWebGPU] = useState(false);
+  const [waveGenerator, setWaveGenerator] = useState<any>(null);
+  const [oceanManager, setOceanManager] = useState<any>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -43,6 +46,11 @@ export default function Ocean() {
 
   return (
     <div id="canvas-container">
+      {/* Leva Controls - rendered outside Canvas, only on client */}
+      {isClient && waveGenerator && oceanManager && (
+        <OceanControls waveGenerator={waveGenerator} oceanManager={oceanManager} />
+      )}
+      
       <Canvas
         gl={async (glProps) => {
           // Create WebGPU renderer
@@ -67,7 +75,10 @@ export default function Ocean() {
         }}
         style={{ width: '100vw', height: '100vh' }}
       >
-        <OceanScene />
+        <OceanScene 
+          onWaveGeneratorReady={setWaveGenerator}
+          onOceanManagerReady={setOceanManager}
+        />
       </Canvas>
     </div>
   );

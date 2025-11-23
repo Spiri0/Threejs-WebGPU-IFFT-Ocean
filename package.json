@@ -10,13 +10,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.0.0",
+    "leva": "^0.10.1",
     "next": "^15.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@react-three/fiber": "^9.0.0",
-    "@react-three/drei": "^10.7.7",
     "three": "^0.179.0",
-    "leva": "^0.9.35",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
@@ -24,9 +24,9 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/three": "^0.179.0",
-    "typescript": "^5.0.0",
     "eslint": "^8.0.0",
-    "eslint-config-next": "^15.1.1"
+    "eslint-config-next": "^15.1.1",
+    "typescript": "^5.0.0"
   },
   "engines": {
     "node": ">=21.0.0"

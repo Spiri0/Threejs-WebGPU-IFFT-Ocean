@@ -12,6 +12,7 @@ export const fragmentStageWGSL = wgslFn(`
         turbidity: f32,
         mieCoefficient: f32,
         elevation: f32,
+        exposure: f32,
         up: vec3<f32>,        
     ) -> vec4<f32> {
 
@@ -65,10 +66,11 @@ export const fragmentStageWGSL = wgslFn(`
         texColor *= 0.04 ;
         texColor += vec3(0.0,0.001,0.0025)*0.3;
     
-        var exposure: f32 = 0.025;
+        // Use exposure parameter instead of hardcoded value
+        var exposureValue: f32 = exposure * 0.025; // Scale the exposure parameter
         var gamma: f32 = 2 - elevation/90;
     
-        var color: vec3<f32> = vec3<f32>(1.0) - exp(-texColor * exposure);
+        var color: vec3<f32> = vec3<f32>(1.0) - exp(-texColor * exposureValue);
         var retColor = pow(color, vec3<f32>( 1.0/ gamma));
 
 /*

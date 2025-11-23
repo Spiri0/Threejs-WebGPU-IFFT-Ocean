@@ -4,7 +4,7 @@ import { useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 // @ts-ignore - JS module
 import { wave_generator } from '../src/waves/wave-generator.js';
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { GUIAdapter } from './GUIAdapter';
 
 interface WaveGeneratorProps {
   onInitialized: (waveGen: any) => void;
@@ -13,7 +13,7 @@ interface WaveGeneratorProps {
 export default function WaveGenerator({ onInitialized }: WaveGeneratorProps) {
   const { gl, scene, camera } = useThree();
   const waveGenRef = useRef<any>(null);
-  const guiRef = useRef<GUI | null>(null);
+  const guiRef = useRef<GUIAdapter | null>(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -21,8 +21,8 @@ export default function WaveGenerator({ onInitialized }: WaveGeneratorProps) {
 
     const initWaveGenerator = async () => {
       try {
-        // Create GUI
-        const gui = new GUI();
+        // Create GUI adapter (compatible with existing code, but Leva will be used separately)
+        const gui = new GUIAdapter();
         gui.close(); // Start closed
         guiRef.current = gui;
 

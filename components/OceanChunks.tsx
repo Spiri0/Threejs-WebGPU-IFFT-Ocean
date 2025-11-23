@@ -8,9 +8,10 @@ import OceanChunkManager from '../src/ocean/ocean.js';
 
 interface OceanChunksProps {
   waveGenerator: any;
+  onOceanManagerReady?: (oceanManager: any) => void;
 }
 
-export default function OceanChunks({ waveGenerator }: OceanChunksProps) {
+export default function OceanChunks({ waveGenerator, onOceanManagerReady }: OceanChunksProps) {
   const { gl, scene, camera } = useThree();
   const oceanManagerRef = useRef<any>(null);
   const initializedRef = useRef(false);
@@ -67,6 +68,11 @@ export default function OceanChunks({ waveGenerator }: OceanChunksProps) {
         oceanManagerRef.current = oceanManager;
         initializedRef.current = true;
         console.log('Ocean chunks initialized successfully');
+        
+        // Notify parent that ocean manager is ready (so we can access sky)
+        if (onOceanManagerReady) {
+          onOceanManagerReady(oceanManager);
+        }
       } catch (error) {
         console.error('Failed to initialize ocean chunks:', error);
         console.error('Error details:', {

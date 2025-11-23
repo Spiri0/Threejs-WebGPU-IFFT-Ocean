@@ -21,6 +21,7 @@ export const skybox = (() => {
 				mieCoefficient: uniform(0.005),
 				mieDirectionalG: uniform(0.8),
 				elevation: uniform(2),
+				exposure: uniform(1),
 				sunPosition: uniform(new Vector3(0, 0, 0)),
 				up: uniform(new Vector3( 0, 1, 0 )),
 				cameraPosition: uniform(new Vector3(0, 0, 0)),

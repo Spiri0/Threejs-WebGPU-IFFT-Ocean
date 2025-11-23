@@ -76,6 +76,9 @@ class OceanChunkManager extends entity.Component {
 		sky.scale.setScalar(500000);
 		//sky.rotation.z = Math.PI/2;
 		params.scene.add(sky);
+		
+		// Store sky reference so it can be accessed for updates
+		this.sky_ = sky;
 
 		//this.scene_.add(sky);
 
@@ -94,6 +97,7 @@ class OceanChunkManager extends entity.Component {
 		sky.material.colorNode.parameters.mieCoefficient.value = params.guiParams.sky.mieCoefficient;
 		sky.material.colorNode.parameters.mieDirectionalG.value = params.guiParams.sky.mieDirectionalG;
 		sky.material.colorNode.parameters.elevation.value = params.guiParams.sky.elevation;
+		sky.material.colorNode.parameters.exposure.value = params.guiParams.sky.exposure;
 		sky.material.colorNode.parameters.up.value = params.guiParams.sky.up;
 		sky.material.colorNode.parameters.rayleigh.value = params.guiParams.sky.rayleigh;
 	

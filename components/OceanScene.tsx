@@ -8,9 +8,15 @@ import OceanChunks from './OceanChunks';
 import Sky from './Sky';
 import PlayerController from './PlayerController';
 
-export default function OceanScene() {
+interface OceanSceneProps {
+  onWaveGeneratorReady?: (waveGen: any) => void;
+  onOceanManagerReady?: (oceanManager: any) => void;
+}
+
+export default function OceanScene({ onWaveGeneratorReady, onOceanManagerReady }: OceanSceneProps) {
   const { gl, scene, camera } = useThree();
   const [waveGenerator, setWaveGenerator] = useState<any>(null);
+  const [oceanManager, setOceanManager] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize wave generator
@@ -51,13 +57,30 @@ export default function OceanScene() {
       <directionalLight position={[100, 100, 100]} intensity={1} castShadow />
 
       {/* Wave Generator (IFFT Compute) */}
-      <WaveGeneratorComponent onInitialized={setWaveGenerator} />
+      <WaveGeneratorComponent 
+        onInitialized={(wg) => {
+          setWaveGenerator(wg);
+          if (onWaveGeneratorReady) {
+            onWaveGeneratorReady(wg);
+          }
+        }} 
+      />
 
-      {/* Ocean Chunks (CDLOD Geometry) */}
-      {waveGenerator && <OceanChunks waveGenerator={waveGenerator} />}
+      {/* Ocean Chunks (CDLOD Geometry) - Sky is created here */}
+      {waveGenerator && (
+        <OceanChunks 
+          waveGenerator={waveGenerator} 
+          onOceanManagerReady={(manager) => {
+            setOceanManager(manager);
+            if (onOceanManagerReady) {
+              onOceanManagerReady(manager);
+            }
+          }} 
+        />
+      )}
 
-      {/* Sky Dome */}
-      <Sky />
+      {/* Sky Dome - Removed, sky is created in OceanChunks */}
+      {/* <Sky /> */}
 
       {/* Player Controller - Disabled when using OrbitControls */}
       {/* <PlayerController /> */}
