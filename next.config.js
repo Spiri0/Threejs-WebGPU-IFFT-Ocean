@@ -49,7 +49,6 @@ const nextConfig = {
   },
   // Optimize for production
   reactStrictMode: true,
-  swcMinify: true,
 };
 
 module.exports = nextConfig;

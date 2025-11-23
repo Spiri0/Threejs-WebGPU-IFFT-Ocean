@@ -1,8 +1,7 @@
 'use client';
 
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
-import { useControls } from 'leva';
+import { useEffect, useState } from 'react';
 import WaveGeneratorComponent from './WaveGenerator';
 import OceanChunks from './OceanChunks';
 import Sky from './Sky';

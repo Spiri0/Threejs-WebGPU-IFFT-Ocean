@@ -2,68 +2,41 @@
 
 import { Canvas } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
-import * as THREE from 'three';
-import { WebGPURenderer } from 'three/webgpu';
-import { checkWebGPUSupport, getWebGPUErrorMessage } from '@/lib/three-setup';
+import * as THREE from 'three/webgpu';
+import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js';
 import OceanScene from './OceanScene';
 
 export default function Ocean() {
-  const [webGPUSupported, setWebGPUSupported] = useState<boolean | null>(null);
-  const [renderer, setRenderer] = useState<WebGPURenderer | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const [supportsWebGPU, setSupportsWebGPU] = useState(false);
 
   useEffect(() => {
-    // Check WebGPU support
-    const supported = checkWebGPUSupport();
-    setWebGPUSupported(supported);
-
-    if (!supported) {
-      const errorElement = getWebGPUErrorMessage();
-      if (errorElement) {
-        document.body.appendChild(errorElement);
-      }
-      return;
-    }
-
-    // Create WebGPU renderer
-    const canvas = document.createElement('canvas');
-    const webgpuRenderer = new WebGPURenderer({
-      canvas,
-      antialias: true,
-      forceWebGL: false,
-    });
-
-    webgpuRenderer.outputColorSpace = THREE.SRGBColorSpace;
-    webgpuRenderer.setPixelRatio(window.devicePixelRatio);
-    webgpuRenderer.shadowMap.enabled = true;
-    webgpuRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    webgpuRenderer.setClearColor(0x87ceeb); // Sky blue
-
-    // Initialize WebGPU
-    webgpuRenderer.init().then(() => {
-      setRenderer(webgpuRenderer);
-    });
-
-    return () => {
-      webgpuRenderer.dispose();
-    };
+    setIsClient(true);
+    setSupportsWebGPU(WebGPU.isAvailable());
   }, []);
 
-  if (webGPUSupported === false) {
+  // Don't render anything until client-side
+  if (!isClient) {
     return (
-      <div className="error">
-        <h2>WebGPU Not Supported</h2>
-        <p>
-          Your browser does not support WebGPU. Please use a browser with WebGPU support
-          (Chrome 113+, Edge 113+, or enable experimental WebGPU in your browser settings).
-        </p>
+      <div className="loading">
+        <div>Initializing...</div>
       </div>
     );
   }
 
-  if (!renderer) {
+  // Show error if WebGPU is not supported
+  if (!supportsWebGPU) {
     return (
-      <div className="loading">
-        <div>Initializing WebGPU...</div>
+      <div className="error">
+        <h2>WebGPU Not Supported</h2>
+        <p>
+          Your browser does not support WebGPU. Please use a WebGPU-compatible browser:
+        </p>
+        <ul style={{ marginTop: '10px', textAlign: 'left' }}>
+          <li>Chrome 113+ (enable chrome://flags/#enable-unsafe-webgpu if needed)</li>
+          <li>Edge 113+</li>
+          <li>Other Chromium-based browsers with WebGPU enabled</li>
+        </ul>
       </div>
     );
   }
@@ -71,14 +44,27 @@ export default function Ocean() {
   return (
     <div id="canvas-container">
       <Canvas
-        gl={renderer}
+        gl={async (glProps) => {
+          // Create WebGPU renderer
+          const renderer = new THREE.WebGPURenderer(glProps as any);
+
+          // Configure renderer
+          renderer.setPixelRatio(window.devicePixelRatio);
+          renderer.shadowMap.enabled = true;
+          renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+          renderer.setClearColor(0x87ceeb); // Sky blue
+
+          // CRITICAL: Must await init() for WebGPU to work
+          await renderer.init();
+
+          return renderer;
+        }}
         camera={{
           fov: 50,
           near: 0.1,
           far: 1e6,
           position: [0, 10, 20],
         }}
-        dpr={window.devicePixelRatio}
         style={{ width: '100vw', height: '100vh' }}
       >
         <OceanScene />
