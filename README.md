@@ -2,6 +2,19 @@ See it running live [here](https://spiri0.github.io/Threejs-WebGPU-IFFT-Ocean/in
 
 ![ocean_social](https://github.com/user-attachments/assets/31a04239-c9e2-4e16-ac56-af78e51e4560)
 
+## ⛈️ New: Immersive Weather System
+
+This project now features a comprehensive weather system with:
+
+- **🌊 Weather Presets**: Six built-in presets (Calm, Moderate, Rough, Storm, Tropical, Arctic)
+- **🌍 Real-Time Weather**: Integration with YR.no for location-based weather data
+- **📍 Location Support**: GPS location, named ocean locations, or custom coordinates
+- **💾 Custom Presets**: Create, save, and share your own weather configurations
+- **🌧️ Atmospheric Effects**: Dynamic fog and rain particle systems
+- **🔄 Auto-Update**: Continuous weather synchronization (15-min intervals)
+
+See [Weather System Documentation](.docs/WEATHER_SYSTEM.md) for details.
+
 
 March 26, 2025: I've switched the IFFT system from storage textures to storage buffers. This saves a lot of compute steps and allows for the use of larger cascade textures. Now 3x512 instead of the previous 4x256. The performance has improved significantly.
 

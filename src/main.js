@@ -5,6 +5,7 @@ import ThreeJSController from './threejs-component.js';
 import OceanChunkManager from './ocean/ocean.js';
 import {wave_generator} from './waves/wave-generator.js';
 import {spawners} from './spawners.js';
+import {WeatherController} from './weather/weather-controller.js';
 
 
 class Main extends entity.Entity{
@@ -111,7 +112,23 @@ class Main extends entity.Entity{
 		} );
 		ocean.AddComponent( this.oceanGeometry );
 		this.entityManager.Add( ocean, 'ocean' );
-		
+
+		//----------------------------------------------------------------------------------
+
+		//----------------------------Weather System----------------------------------------
+
+		const weather = new entity.Entity();
+		this.weatherController = new WeatherController();
+		await this.weatherController.Init({
+			...basicParams,
+			gui: this.gui,
+			guiParams: this.guiParams,
+			waveGenerator: waves.components_.WaveGenerator,
+			oceanManager: this.oceanGeometry,
+		});
+		weather.AddComponent(this.weatherController);
+		this.entityManager.Add(weather, 'weather');
+
 		//----------------------------------------------------------------------------------
 	}
 
