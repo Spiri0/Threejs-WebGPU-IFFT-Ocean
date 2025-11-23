@@ -40,10 +40,19 @@ export default function WaveGenerator({ onInitialized }: WaveGeneratorProps) {
         waveGenRef.current = waveGen;
         initializedRef.current = true;
 
+        console.log('Wave generator initialized:', waveGen);
+        console.log('Wave generator properties:', {
+          hasUpdate: typeof waveGen.Update_ === 'function',
+          hasParams: !!waveGen.params_,
+          cascades: waveGen.cascades,
+          size: waveGen.size,
+        });
+
         // Notify parent component
         onInitialized(waveGen);
       } catch (error) {
         console.error('Failed to initialize wave generator:', error);
+        console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
       }
     };
 

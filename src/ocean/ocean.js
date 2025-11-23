@@ -41,12 +41,12 @@ class OceanChunkManager extends entity.Component {
 			...params,
 			lodScale: this.params_.waveGenerator.lodScale,
 			cascades: this.params_.waveGenerator.cascades,
-			waveLengths: this.params_.waveGenerator.waveLengths,
+			// waveLengths is constructed in OceanMaterial from cascades, not needed here
 			foamStrength: this.params_.waveGenerator.foamStrength,
 			foamThreshold: this.params_.waveGenerator.foamThreshold,
 			ifftResolution: this.params_.waveGenerator.size,
-			depthTexture: this.params_.depthTexture,
-			mySampler: this.params_.mySampler,
+			depthTexture: this.params_.depthTexture || null,
+			mySampler: this.params_.mySampler || null,
 			environment: this.cubeRenderTarget.texture,
 			sunPosition: this.sun
 		}
@@ -182,7 +182,18 @@ class OceanChunkManager extends entity.Component {
 			for (let k in this.chunks_) {
 				this.chunks_[ k ].chunk.Show();
 			}
-			this.UpdateVisibleChunks_Quadtree_( relativeCameraPosition );       
+			const chunkCountBefore = Object.keys(this.chunks_).length;
+			this.UpdateVisibleChunks_Quadtree_( relativeCameraPosition );
+			const chunkCountAfter = Object.keys(this.chunks_).length;
+			if (chunkCountAfter > chunkCountBefore && !this._loggedChunkCreation) {
+				console.log(`Ocean: Created ${chunkCountAfter - chunkCountBefore} new chunks (total: ${chunkCountAfter})`);
+				this._loggedChunkCreation = true;
+			}
+		} else {
+			if (!this._loggedBusy) {
+				console.log('Ocean: Builder is busy, waiting for workers...');
+				this._loggedBusy = true;
+			}
 		}
 			
 		for ( let k in this.chunks_ ) {

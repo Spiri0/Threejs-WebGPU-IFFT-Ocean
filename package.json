@@ -14,7 +14,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "@react-three/fiber": "^9.0.0",
-    "@react-three/drei": "^9.117.0",
+    "@react-three/drei": "^10.7.7",
     "three": "^0.179.0",
     "leva": "^0.9.35",
     "zustand": "^4.5.0"

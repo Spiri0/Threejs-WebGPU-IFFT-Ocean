@@ -17,13 +17,13 @@ class OceanMaterial extends entity.Component {
 	Init(params) {
   
 		const loader = new THREE.TextureLoader();
-		const noiseTexture = loader.load("./resources/textures/simplex-noise.png");
-		const testTexture = loader.load("./resources/textures/uv_grid_opengl.jpg");
+		const noiseTexture = loader.load("/resources/textures/simplex-noise.png");
+		const testTexture = loader.load("/resources/textures/uv_grid_opengl.jpg");
 
 
 
 		const cubeTextureLoader = new THREE.CubeTextureLoader();
-		cubeTextureLoader.setPath('./resources/textures/cube/sky/');
+		cubeTextureLoader.setPath('/resources/textures/cube/sky/');
 		const environmentTexture = cubeTextureLoader.load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg']);
 		//const environmentTexture = cubeTextureLoader.load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png']);
 		environmentTexture.minFilter = THREE.LinearFilter;

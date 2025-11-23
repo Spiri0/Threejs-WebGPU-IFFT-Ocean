@@ -79,7 +79,7 @@ export const ocean_builder_threaded = (() => {
 			this.pool_ = {};
 			this.old_ = [];
 			
-			this.workerPool_ = new WorkerThreadPool(_NUM_WORKERS, 'src/ocean/ocean-builder-threaded-worker.js');
+			this.workerPool_ = new WorkerThreadPool(_NUM_WORKERS, '/src/ocean/ocean-builder-threaded-worker.js');
 			
 			this.params_ = params;
 		}

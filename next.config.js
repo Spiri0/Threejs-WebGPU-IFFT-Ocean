@@ -1,12 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { isServer }) => {
-    // Handle workers
-    config.module.rules.push({
-      test: /\.worker\.js$/,
-      use: { loader: 'worker-loader' },
-    });
-
     // Add aliases for Three.js WebGPU builds
     const path = require('path');
     config.resolve.alias = {
@@ -16,8 +10,15 @@ const nextConfig = {
       'three/addons': path.resolve(__dirname, 'node_modules/three/examples/jsm'),
     };
 
-    // Don't bundle these on the server
+    // Support top-level await for WebGPU.js
+    config.experiments = {
+      ...config.experiments,
+      topLevelAwait: true,
+    };
+
+    // Set target to support modern ES features
     if (!isServer) {
+      config.target = ['web', 'es2022'];
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
