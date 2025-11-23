@@ -45,6 +45,8 @@ export const vertexStageWGSL = (() => {
         var lod1 = min(lodScale * waveLengths.y / viewDist, 1.0);
         var lod2 = min(lodScale * waveLengths.z / viewDist, 1.0);
 
+        // Calculate texture coordinates - these can be very large for distant chunks
+        // InterpolateBilinear will handle wrapping, but we ensure they're reasonable
         var vtexelCoord0: vec2<f32> = ifftResolution * morphedPosition.xz/waveLengths.x;
         var vtexelCoord1: vec2<f32> = ifftResolution * morphedPosition.xz/waveLengths.y;
         var vtexelCoord2: vec2<f32> = ifftResolution * morphedPosition.xz/waveLengths.z;
@@ -71,21 +73,29 @@ export const vertexStageWGSL = (() => {
 
 
     fn InterpolateBilinear(texture: texture_2d<f32>, position: vec2<f32>, size: f32) -> vec4<f32> {
+        // Ensure position is wrapped to [0, size) range to prevent precision issues
+        // This is critical for large world positions that could cause spikes
+        var wrappedPos = fract(position / size) * size;
+        
+        // Clamp to prevent any edge cases
+        wrappedPos = clamp(wrappedPos, vec2<f32>(0.0), vec2<f32>(size - 1.0));
 
-        var texelSize = 1.0 / size;
-        var wrapCoords = fract(position / size) * size;
-
-        var texel00 = vec2<u32>(floor(wrapCoords));
+        var texel00 = vec2<u32>(floor(wrappedPos));
         var texel11 = texel00 + vec2<u32>(1, 1);
         var texel01 = vec2<u32>(texel11.x, texel00.y);
         var texel10 = vec2<u32>(texel00.x, texel11.y);
 
-        texel00 = texel00 % u32(size);
-        texel01 = texel01 % u32(size);
-        texel10 = texel10 % u32(size);
-        texel11 = texel11 % u32(size);
+        // Wrap texel coordinates using modulo to handle texture tiling
+        var sizeU = u32(size);
+        texel00 = texel00 % sizeU;
+        texel01 = texel01 % sizeU;
+        texel10 = texel10 % sizeU;
+        texel11 = texel11 % sizeU;
 
-        var fractCoords = wrapCoords - vec2<f32>(texel00);
+        var fractCoords = wrappedPos - vec2<f32>(texel00);
+        
+        // Clamp fractional coordinates to [0, 1] to prevent interpolation issues
+        fractCoords = clamp(fractCoords, vec2<f32>(0.0), vec2<f32>(1.0));
 
         var value00 = textureLoad(texture, texel00, 0); // tl
         var value10 = textureLoad(texture, texel01, 0); // tr

@@ -2,6 +2,7 @@
 
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
+import { OrbitControls } from '@react-three/drei';
 import WaveGeneratorComponent from './WaveGenerator';
 import OceanChunks from './OceanChunks';
 import Sky from './Sky';
@@ -34,6 +35,17 @@ export default function OceanScene() {
 
   return (
     <>
+      {/* Camera Controls - OrbitControls for standard mouse controls */}
+      <OrbitControls
+        enablePan={true}
+        enableZoom={true}
+        enableRotate={true}
+        minDistance={5}
+        maxDistance={1000}
+        minPolarAngle={0}
+        maxPolarAngle={Math.PI / 2}
+      />
+
       {/* Lighting */}
       <ambientLight intensity={0.5} />
       <directionalLight position={[100, 100, 100]} intensity={1} castShadow />
@@ -47,8 +59,8 @@ export default function OceanScene() {
       {/* Sky Dome */}
       <Sky />
 
-      {/* Player Controller */}
-      <PlayerController />
+      {/* Player Controller - Disabled when using OrbitControls */}
+      {/* <PlayerController /> */}
     </>
   );
 }
