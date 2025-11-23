@@ -6,12 +6,20 @@ import * as THREE from 'three/webgpu';
 import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js';
 import OceanScene from './OceanScene';
 import OceanControls from './OceanControls';
+import PostProcessingControls from './PostProcessingControls';
+import dynamic from 'next/dynamic';
+
+// Dynamically import PostProcessing to avoid SSR issues
+const PostProcessing = dynamic(() => import('./PostProcessing'), {
+  ssr: false,
+});
 
 export default function Ocean() {
   const [isClient, setIsClient] = useState(false);
   const [supportsWebGPU, setSupportsWebGPU] = useState(false);
   const [waveGenerator, setWaveGenerator] = useState<any>(null);
   const [oceanManager, setOceanManager] = useState<any>(null);
+  const [postProcessingSettings, setPostProcessingSettings] = useState<any>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -48,7 +56,10 @@ export default function Ocean() {
     <div id="canvas-container">
       {/* Leva Controls - rendered outside Canvas, only on client */}
       {isClient && waveGenerator && oceanManager && (
-        <OceanControls waveGenerator={waveGenerator} oceanManager={oceanManager} />
+        <>
+          <OceanControls waveGenerator={waveGenerator} oceanManager={oceanManager} />
+          <PostProcessingControls onPostProcessingChange={setPostProcessingSettings} />
+        </>
       )}
       
       <Canvas
@@ -79,6 +90,9 @@ export default function Ocean() {
           onWaveGeneratorReady={setWaveGenerator}
           onOceanManagerReady={setOceanManager}
         />
+        {postProcessingSettings?.enabled && (
+          <PostProcessing {...postProcessingSettings} />
+        )}
       </Canvas>
     </div>
   );
