@@ -39,9 +39,16 @@ class Main extends entity.Entity{
 
 			this.running = true;
 			this.previousTime = 0;
+			this.timeElapsedS = 0;
+
+			this.TIMESTEP = 1000 / 60;
+			this.lastTime = performance.now();
+			this.accumulator = 0;
 
 			this.renderer.setAnimationLoop( this.Animate.bind( this ) );
+
 		}
+
 	}
 
 	CreateGUI() {
@@ -115,33 +122,43 @@ class Main extends entity.Entity{
 		//----------------------------------------------------------------------------------
 	}
 
-	async Animate() {
+	Animate( now ) {
 
 		this.camera.layers.enableAll();
 
-		const now = performance.now();
-		const deltaTime = ( now - this.previousTime );
+		let delta = now - this.previousTime;
 		this.previousTime = now;
-	
-		await this.waveGenerator.Update_( deltaTime );
-		this.oceanGeometry.Update_( deltaTime );
 
-		this.Step( deltaTime );
+		this.accumulator += delta;
+		if ( this.accumulator > 200 ) this.accumulator = 200;
+
+		if ( this.accumulator >= this.TIMESTEP ) {
+
+			const dt = this.TIMESTEP;
+
+			this.waveGenerator.Update_( dt );
+			this.oceanGeometry.Update_( dt );
+
+			this.Step( dt );
+
+			this.accumulator -= this.TIMESTEP;
+
+		}
+
 		this.renderer.render( this.scene, this.camera );
-		
-	//	console.log(deltaTime)
 
 	}
 
+	Step( timeElapsed ) {
 
-	Step(timeElapsed) { 
 		const timeElapsedS = timeElapsed / 1000;
 		this.entityManager.Update( timeElapsedS, 0 );
+
 	}
 
 }
 
 
-export {Main};
+export { Main };
 
 
